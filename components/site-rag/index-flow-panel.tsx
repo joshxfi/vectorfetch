@@ -7,6 +7,7 @@ import {
   workspaceProgressValue,
   workspaceTone,
 } from "@/components/site-rag/helpers";
+import { IndexPhaseViz } from "@/components/site-rag/index-phase-viz";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,7 +86,7 @@ export function IndexFlowPanel({
           {statusLine(workspace)}
         </div>
       </CardHeader>
-      <CardContent className="flex min-h-0 flex-1 flex-col gap-4 pt-4">
+      <CardContent className="flex min-h-0 flex-1 flex-col gap-3 pt-3">
         {workspaceError ? (
           <Alert variant="destructive">
             <Warning />
@@ -94,7 +95,7 @@ export function IndexFlowPanel({
           </Alert>
         ) : null}
 
-        <div className="flex flex-col gap-2">
+        <div className="shrink-0 flex flex-col gap-2">
           <div className="flex items-center justify-between gap-3">
             <span className="text-xs font-medium">Pipeline progress</span>
             {workspace?.status === "indexing" ? (
@@ -149,7 +150,7 @@ export function IndexFlowPanel({
           })}
         </div>
 
-        <div className="grid shrink-0 grid-cols-2 gap-x-4 gap-y-2 border p-3 text-xs">
+        <div className="grid shrink-0 grid-cols-2 gap-x-4 gap-y-2 border p-2.5 text-xs">
           <div className="flex items-center justify-between gap-3">
             <span className="text-muted-foreground">Pages</span>
             <span className="font-medium tabular-nums">
@@ -185,6 +186,11 @@ export function IndexFlowPanel({
             zvec local store
           </div>
         </div>
+
+        <IndexPhaseViz
+          key={`${workspace?.workspaceId ?? "idle"}:${workspace?.phase ?? "idle"}`}
+          workspace={workspace}
+        />
       </CardContent>
     </Card>
   );

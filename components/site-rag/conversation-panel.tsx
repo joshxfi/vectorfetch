@@ -108,13 +108,13 @@ export function ConversationPanel({
                 <div
                   key={message.id}
                   className={cn(
-                    "flex flex-col gap-3",
+                    "flex w-full flex-col gap-3",
                     message.role === "user" ? "items-end" : "items-start",
                   )}
                 >
                   <div
                     className={cn(
-                      "max-w-3xl border px-4 py-3 text-sm whitespace-pre-wrap",
+                      "w-full max-w-3xl border px-4 py-3 text-sm whitespace-pre-wrap",
                       message.role === "user"
                         ? "bg-primary text-primary-foreground"
                         : "bg-card text-card-foreground",
@@ -153,12 +153,14 @@ export function ConversationPanel({
             })}
 
             {busyChat ? (
-              <div className="flex max-w-3xl flex-col gap-3">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <SpinnerGap className="animate-spin" />
-                  Retrieving site context and generating an answer
+              <div className="flex w-full flex-col gap-3 items-start">
+                <div className="flex w-full max-w-3xl items-center gap-2 text-xs text-muted-foreground">
+                  <SpinnerGap className="animate-spin shrink-0" />
+                  <span className="truncate">
+                    Retrieving site context and generating an answer
+                  </span>
                 </div>
-                <Skeleton className="h-16 border" />
+                <Skeleton className="h-16 w-full max-w-3xl border" />
               </div>
             ) : null}
           </div>

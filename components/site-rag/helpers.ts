@@ -24,7 +24,7 @@ const phaseWeights: Record<WorkspacePhase, [number, number]> = {
   error: [0, 100],
 };
 
-function phaseRatio(workspace: WorkspaceManifest) {
+export function workspacePhaseRatio(workspace: WorkspaceManifest) {
   switch (workspace.phase) {
     case "crawling":
       return (
@@ -62,7 +62,7 @@ export function workspaceProgressValue(workspace: WorkspaceManifest | null) {
   }
 
   const [start, end] = phaseWeights[workspace.phase];
-  const ratio = Math.max(0, Math.min(1, phaseRatio(workspace)));
+  const ratio = Math.max(0, Math.min(1, workspacePhaseRatio(workspace)));
 
   return Math.round(start + (end - start) * ratio);
 }
