@@ -1,4 +1,20 @@
 export type WorkspaceStatus = "indexing" | "ready" | "error";
+export type WorkspacePhase =
+  | "crawling"
+  | "chunking"
+  | "embedding"
+  | "storing"
+  | "ready"
+  | "error";
+
+export type WorkspaceActivityKind =
+  | "discovered"
+  | "indexed-page"
+  | "chunked-page"
+  | "embedded-batch"
+  | "stored-batch"
+  | "failed-page"
+  | "completed";
 
 export interface WorkspaceProgress {
   discovered: number;
@@ -7,6 +23,31 @@ export interface WorkspaceProgress {
   skipped: number;
   failed: number;
   limit: number;
+}
+
+export interface WorkspacePipeline {
+  discoveredPages: number;
+  visitedPages: number;
+  indexedPages: number;
+  chunkedPages: number;
+  embeddedChunks: number;
+  storedChunks: number;
+  failedPages: number;
+}
+
+export interface WorkspaceActivityEvent {
+  id: string;
+  kind: WorkspaceActivityKind;
+  at: string;
+  phase?: WorkspacePhase;
+  url?: string;
+  path?: string;
+  title?: string;
+  detail: string;
+  count?: number;
+  progressCurrent?: number;
+  progressTotal?: number;
+  summaryKey?: string;
 }
 
 export interface WorkspaceStats {
@@ -19,6 +60,7 @@ export interface WorkspaceManifest {
   rootUrl: string;
   origin: string;
   status: WorkspaceStatus;
+  phase: WorkspacePhase;
   error: string | null;
   createdAt: string;
   updatedAt: string;
@@ -27,7 +69,9 @@ export interface WorkspaceManifest {
   chatModel: string;
   embeddingDimensions: number | null;
   crawl: WorkspaceProgress;
+  pipeline: WorkspacePipeline;
   stats: WorkspaceStats;
+  recentActivity: WorkspaceActivityEvent[];
 }
 
 export interface CrawledPage {

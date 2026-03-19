@@ -1,0 +1,180 @@
+"use client";
+
+import {
+  ChatCircleDots,
+  MagnifyingGlass,
+  SpinnerGap,
+  Warning,
+} from "@phosphor-icons/react";
+import type { UIMessage } from "ai";
+import type { FormEvent } from "react";
+import { Streamdown } from "streamdown";
+
+import { messageSources, messageText } from "@/components/site-rag/helpers";
+import { MessageSources } from "@/components/site-rag/message-sources";
+import { PromptComposer } from "@/components/site-rag/prompt-composer";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+
+type ConversationPanelProps = {
+  busyChat: boolean;
+  chatError?: Error;
+  messages: UIMessage[];
+  prompt: string;
+  ready: boolean;
+  onPromptChange: (value: string) => void;
+  onSubmitPrompt: (event: FormEvent<HTMLFormElement>) => void;
+};
+
+export function ConversationPanel({
+  busyChat,
+  chatError,
+  messages,
+  prompt,
+  ready,
+  onPromptChange,
+  onSubmitPrompt,
+}: ConversationPanelProps) {
+  return (
+    <Card className="flex h-full min-h-0 flex-col">
+      <CardHeader className="border-b">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <CardTitle>Conversation</CardTitle>
+            <CardDescription>
+              Ask about the indexed site and inspect the retrieved sources tied
+              to each answer.
+            </CardDescription>
+          </div>
+          <Badge variant={ready ? "secondary" : "outline"}>
+            {ready ? "Retrieval on" : "Waiting for index"}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="flex min-h-0 flex-1 flex-col p-0">
+        {chatError ? (
+          <div className="border-b p-4">
+            <Alert variant="destructive">
+              <Warning />
+              <AlertTitle>Chat Error</AlertTitle>
+              <AlertDescription>{chatError.message}</AlertDescription>
+            </Alert>
+          </div>
+        ) : null}
+
+        <ScrollArea className="min-h-0 flex-1">
+          <div className="flex min-h-full flex-col gap-4 p-4">
+            {messages.length === 0 ? (
+              <div className="flex flex-col gap-4">
+                <div className="grid gap-3 border p-4 md:grid-cols-[auto_1fr]">
+                  <ChatCircleDots className="text-muted-foreground" />
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm font-medium">
+                      Ask the site once the local index is ready
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      The assistant searches your local zvec collection before
+                      answering and cites the pages it used.
+                    </p>
+                  </div>
+                </div>
+
+                {!ready ? (
+                  <div className="grid gap-3 xl:grid-cols-2">
+                    <Skeleton className="h-24 border" />
+                    <Skeleton className="h-24 border" />
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {messages.map((message) => {
+              const text = messageText(message);
+              const sources =
+                message.role === "assistant" ? messageSources(message) : [];
+
+              return (
+                <div
+                  key={message.id}
+                  className={cn(
+                    "flex flex-col gap-3",
+                    message.role === "user" ? "items-end" : "items-start",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "max-w-3xl border px-4 py-3 text-sm whitespace-pre-wrap",
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card text-card-foreground",
+                    )}
+                  >
+                    {text ? (
+                      message.role === "assistant" ? (
+                        <Streamdown
+                          className="streamdown prose prose-neutral max-w-none text-current dark:prose-invert"
+                          isAnimating={busyChat}
+                          mode={busyChat ? "streaming" : "static"}
+                        >
+                          {text}
+                        </Streamdown>
+                      ) : (
+                        text
+                      )
+                    ) : (
+                      <span className="text-muted-foreground">
+                        Waiting for model output...
+                      </span>
+                    )}
+                  </div>
+
+                  {message.role === "assistant" && sources.length > 0 ? (
+                    <div className="flex w-full max-w-3xl flex-col gap-2">
+                      <div className="flex items-center gap-2 text-xs font-medium">
+                        <MagnifyingGlass className="text-muted-foreground" />
+                        Retrieved sources
+                      </div>
+                      <MessageSources sources={sources} />
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+
+            {busyChat ? (
+              <div className="flex max-w-3xl flex-col gap-3">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <SpinnerGap className="animate-spin" />
+                  Retrieving site context and generating an answer
+                </div>
+                <Skeleton className="h-16 border" />
+              </div>
+            ) : null}
+          </div>
+        </ScrollArea>
+      </CardContent>
+      <CardFooter className="border-t p-0">
+        <div className="w-full p-4">
+          <PromptComposer
+            busyChat={busyChat}
+            prompt={prompt}
+            ready={ready}
+            onPromptChange={onPromptChange}
+            onSubmitPrompt={onSubmitPrompt}
+          />
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}

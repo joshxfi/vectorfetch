@@ -7,7 +7,7 @@ import {
 import { MAX_CRAWL_PAGES } from "@/lib/rag/constants";
 import { extractPageContent } from "@/lib/rag/text";
 import type { CrawledPage, WorkspaceProgress } from "@/lib/rag/types";
-import { isSameOriginUrl, normalizeCrawlUrl } from "@/lib/rag/url";
+import { isSameOriginUrl, normalizeCrawlUrl, urlPathname } from "@/lib/rag/url";
 
 function uniqueLinks({
   $,
@@ -50,10 +50,22 @@ export async function crawlSite({
   rootUrl,
   maxPages = MAX_CRAWL_PAGES,
   onProgress,
+  onDiscovered,
+  onPageIndexed,
+  onFailedPage,
 }: {
   rootUrl: string;
   maxPages?: number;
   onProgress?: (progress: WorkspaceProgress) => Promise<void> | void;
+  onDiscovered?: (urls: string[]) => Promise<void> | void;
+  onPageIndexed?: (
+    page: CrawledPage,
+    progress: WorkspaceProgress,
+  ) => Promise<void> | void;
+  onFailedPage?: (
+    page: { url: string; path: string },
+    progress: WorkspaceProgress,
+  ) => Promise<void> | void;
 }) {
   const progress: WorkspaceProgress = {
     discovered: 1,
@@ -97,6 +109,7 @@ export async function crawlSite({
           seenContentHashes.add(page.contentHash);
           pages.push(page);
           progress.indexedPages = pages.length;
+          await onPageIndexed?.(page, { ...progress });
         }
 
         const links = uniqueLinks({
@@ -109,13 +122,22 @@ export async function crawlSite({
 
         if (links.length > 0) {
           progress.discovered = seenUrls.size;
+          await onDiscovered?.(links);
           await addRequests(links);
         }
 
         await publishProgress();
       },
-      async failedRequestHandler() {
+      async failedRequestHandler({ request }) {
         progress.failed += 1;
+        const failedUrl = request.loadedUrl ?? request.url;
+        await onFailedPage?.(
+          {
+            url: failedUrl,
+            path: urlPathname(failedUrl),
+          },
+          { ...progress },
+        );
         await publishProgress();
       },
     },
