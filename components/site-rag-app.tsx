@@ -27,14 +27,17 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress, ProgressLabel } from "@/components/ui/progress";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import type { SearchChunkResult, WorkspaceManifest } from "@/lib/rag/types";
@@ -339,305 +342,285 @@ export function SiteRagApp() {
   }
 
   const ready = workspace?.status === "ready";
+  const busyChat = chatStatus === "submitted" || chatStatus === "streaming";
 
-  return (
-    <div className="min-h-svh bg-background">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-linear-to-b from-primary/10 via-transparent to-transparent" />
-      <div className="relative mx-auto flex min-h-svh w-full max-w-7xl flex-col gap-6 p-4 md:p-6">
-        <header className="flex flex-col gap-2 border-b pb-4">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline">Local Website RAG</Badge>
-            <Badge variant={tone.variant}>{tone.label}</Badge>
-          </div>
+  const conversationPane = (
+    <Card className="flex h-full min-h-0 flex-col">
+      <CardHeader className="border-b">
+        <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-medium tracking-tight">VectorFetch</h1>
-            <p className="max-w-3xl text-sm text-muted-foreground">
-              Crawl one website locally, index it with Ollama embeddings, and
-              let the assistant retrieve site chunks during chat.
-            </p>
+            <CardTitle>Conversation</CardTitle>
+            <CardDescription>
+              Ask about the indexed site and review the retrieved sources tied
+              to each answer.
+            </CardDescription>
           </div>
-        </header>
+          <Badge variant={ready ? "secondary" : "outline"}>
+            {ready ? "Retrieval on" : "Waiting for index"}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="flex min-h-0 flex-1 flex-col p-0">
+        {chatError ? (
+          <div className="border-b p-4">
+            <Alert variant="destructive">
+              <Warning />
+              <AlertTitle>Chat Error</AlertTitle>
+              <AlertDescription>{chatError.message}</AlertDescription>
+            </Alert>
+          </div>
+        ) : null}
 
-        <div className="grid flex-1 gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
-          <div className="flex flex-col gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Site Workspace</CardTitle>
-                <CardDescription>
-                  One same-origin site per workspace. Submitting a new URL
-                  replaces the current local index.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4">
-                <form
-                  className="flex flex-col gap-3"
-                  onSubmit={submitWorkspace}
-                >
-                  <Input
-                    aria-label="Website URL"
-                    autoComplete="off"
-                    disabled={workspaceBusy}
-                    placeholder="https://docs.example.com"
-                    value={workspaceUrl}
-                    onChange={(event) => setWorkspaceUrl(event.target.value)}
-                  />
-                  <div className="flex gap-2">
-                    <Button disabled={workspaceBusy} type="submit">
-                      {workspaceBusy ? (
-                        <SpinnerGap
-                          className="animate-spin"
-                          data-icon="inline-start"
-                        />
-                      ) : (
-                        <GlobeHemisphereWest data-icon="inline-start" />
-                      )}
-                      {workspaceId ? "Reindex Site" : "Index Site"}
-                    </Button>
-                    <Button
-                      disabled={!workspaceId || workspaceBusy}
-                      type="button"
-                      variant="destructive"
-                      onClick={() => void clearWorkspace()}
-                    >
-                      <Trash data-icon="inline-start" />
-                      Clear
-                    </Button>
+        <ScrollArea className="min-h-0 flex-1">
+          <div className="flex min-h-full flex-col gap-4 p-4">
+            {messages.length === 0 ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-3 border p-4">
+                  <ChatCircleDots className="mt-0.5 text-muted-foreground" />
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm font-medium">
+                      Ask about the indexed website
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      The assistant searches the local vector index before
+                      answering and cites the pages it uses.
+                    </p>
                   </div>
-                </form>
+                </div>
 
-                {workspaceError ? (
-                  <Alert variant="destructive">
-                    <Warning />
-                    <AlertTitle>Workspace Error</AlertTitle>
-                    <AlertDescription>{workspaceError}</AlertDescription>
-                  </Alert>
+                {!ready ? (
+                  <div className="grid gap-3 xl:grid-cols-2">
+                    <Skeleton className="h-24 border" />
+                    <Skeleton className="h-24 border" />
+                  </div>
                 ) : null}
-
-                <Separator />
-
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-xs font-medium">
-                        Index progress
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {statusLine(workspace)}
-                      </span>
-                    </div>
-                    {workspace?.status === "indexing" ? (
-                      <SpinnerGap className="animate-spin text-muted-foreground" />
-                    ) : null}
-                  </div>
-                  <Progress value={workspaceProgressValue(workspace)}>
-                    <ProgressLabel>Website indexing</ProgressLabel>
-                    <span className="ml-auto text-xs text-muted-foreground tabular-nums">
-                      {workspaceProgressValue(workspace)}%
-                    </span>
-                  </Progress>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col items-start gap-2 text-xs text-muted-foreground">
-                <span>
-                  Models:{" "}
-                  <span className="text-foreground">qwen3-embedding:0.6b</span>{" "}
-                  for embeddings and{" "}
-                  <span className="text-foreground">lfm2:24b</span> for chat.
-                </span>
-                <span>
-                  Storage stays local in a temporary workspace until you clear
-                  it.
-                </span>
-              </CardFooter>
-            </Card>
-
-            <Card size="sm">
-              <CardHeader>
-                <CardTitle>Workspace Stats</CardTitle>
-                <CardDescription>
-                  Current crawl and indexing state for the active site.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex flex-col gap-1 border p-3">
-                    <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                      Pages
-                    </span>
-                    <span className="text-lg font-medium tabular-nums">
-                      {workspace?.stats.pageCount ?? 0}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-1 border p-3">
-                    <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                      Chunks
-                    </span>
-                    <span className="text-lg font-medium tabular-nums">
-                      {workspace?.stats.chunkCount ?? 0}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-1 border p-3">
-                    <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                      Discovered
-                    </span>
-                    <span className="text-lg font-medium tabular-nums">
-                      {workspace?.crawl.discovered ?? 0}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-1 border p-3">
-                    <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                      Failed
-                    </span>
-                    <span className="text-lg font-medium tabular-nums">
-                      {workspace?.crawl.failed ?? 0}
-                    </span>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs font-medium">Active root URL</span>
-                  <span className="break-all text-xs text-muted-foreground">
-                    {workspace?.rootUrl ?? "No active workspace"}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="min-h-[70svh]">
-            <CardHeader>
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex flex-col gap-1">
-                  <CardTitle>Site Chat</CardTitle>
-                  <CardDescription>
-                    Ask questions against the indexed site. The assistant
-                    retrieves relevant chunks during each answer.
-                  </CardDescription>
-                </div>
-                <Badge variant={ready ? "secondary" : "outline"}>
-                  {ready ? "Retrieval on" : "Waiting for index"}
-                </Badge>
               </div>
-            </CardHeader>
-            <CardContent className="flex min-h-0 flex-1 flex-col gap-4">
-              {chatError ? (
-                <Alert variant="destructive">
-                  <Warning />
-                  <AlertTitle>Chat Error</AlertTitle>
-                  <AlertDescription>{chatError.message}</AlertDescription>
-                </Alert>
-              ) : null}
+            ) : null}
 
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden border">
-                <ScrollArea className="h-[52svh] lg:h-[62svh]">
-                  <div className="flex flex-col gap-4 p-4">
-                    {messages.length === 0 ? (
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-start gap-3 border p-4">
-                          <ChatCircleDots className="mt-0.5 text-muted-foreground" />
-                          <div className="flex flex-col gap-2">
-                            <p className="text-sm font-medium">
-                              Ask about the indexed website
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              The assistant will search the local vector index
-                              before answering and will cite the pages it used.
-                            </p>
-                          </div>
-                        </div>
+            {messages.map((message) => {
+              const text = messageText(message);
+              const sources =
+                message.role === "assistant" ? messageSources(message) : [];
 
-                        {!ready ? (
-                          <div className="grid gap-3 md:grid-cols-2">
-                            <Skeleton className="h-24 border" />
-                            <Skeleton className="h-24 border" />
-                          </div>
-                        ) : null}
+              return (
+                <div
+                  key={message.id}
+                  className={cn(
+                    "flex flex-col gap-3",
+                    message.role === "user" ? "items-end" : "items-start",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "max-w-3xl border px-4 py-3 text-sm whitespace-pre-wrap",
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card text-card-foreground",
+                    )}
+                  >
+                    {text || (
+                      <span className="text-muted-foreground">
+                        Waiting for model output...
+                      </span>
+                    )}
+                  </div>
+
+                  {message.role === "assistant" && sources.length > 0 ? (
+                    <div className="flex w-full max-w-3xl flex-col gap-2 border p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium">
+                        <MagnifyingGlass className="text-muted-foreground" />
+                        Retrieved sources
                       </div>
-                    ) : null}
-
-                    {messages.map((message) => {
-                      const text = messageText(message);
-                      const sources =
-                        message.role === "assistant"
-                          ? messageSources(message)
-                          : [];
-
-                      return (
-                        <div
-                          key={message.id}
-                          className={cn(
-                            "flex flex-col gap-3",
-                            message.role === "user"
-                              ? "items-end"
-                              : "items-start",
-                          )}
-                        >
-                          <div
-                            className={cn(
-                              "max-w-3xl border px-4 py-3 text-sm whitespace-pre-wrap",
-                              message.role === "user"
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-card text-card-foreground",
-                            )}
+                      <div className="grid gap-2 xl:grid-cols-2">
+                        {sources.map((source) => (
+                          <a
+                            key={source.url}
+                            className="flex flex-col gap-1 border p-3 transition-colors hover:bg-muted"
+                            href={source.url}
+                            rel="noreferrer"
+                            target="_blank"
                           >
-                            {text || (
-                              <span className="text-muted-foreground">
-                                Waiting for model output...
-                              </span>
-                            )}
-                          </div>
-
-                          {message.role === "assistant" &&
-                          sources.length > 0 ? (
-                            <div className="flex w-full max-w-3xl flex-col gap-2 border p-3">
-                              <div className="flex items-center gap-2 text-xs font-medium">
-                                <MagnifyingGlass className="text-muted-foreground" />
-                                Retrieved sources
-                              </div>
-                              <div className="grid gap-2 md:grid-cols-2">
-                                {sources.map((source) => (
-                                  <a
-                                    key={source.url}
-                                    className="flex flex-col gap-1 border p-3 transition-colors hover:bg-muted"
-                                    href={source.url}
-                                    rel="noreferrer"
-                                    target="_blank"
-                                  >
-                                    <span className="line-clamp-1 text-sm font-medium">
-                                      {source.title}
-                                    </span>
-                                    <span className="line-clamp-1 text-xs text-muted-foreground">
-                                      {source.url}
-                                    </span>
-                                    <span className="line-clamp-2 text-xs text-muted-foreground">
-                                      {source.text}
-                                    </span>
-                                  </a>
-                                ))}
-                              </div>
-                            </div>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-
-                    {chatStatus === "submitted" ||
-                    chatStatus === "streaming" ? (
-                      <div className="flex max-w-3xl flex-col gap-3">
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <SpinnerGap className="animate-spin" />
-                          Retrieving site context and generating an answer
-                        </div>
-                        <Skeleton className="h-16 border" />
+                            <span className="line-clamp-1 text-sm font-medium">
+                              {source.title}
+                            </span>
+                            <span className="line-clamp-1 text-xs text-muted-foreground">
+                              {source.url}
+                            </span>
+                            <span className="line-clamp-2 text-xs text-muted-foreground">
+                              {source.text}
+                            </span>
+                          </a>
+                        ))}
                       </div>
-                    ) : null}
-                  </div>
-                </ScrollArea>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+
+            {busyChat ? (
+              <div className="flex max-w-3xl flex-col gap-3">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <SpinnerGap className="animate-spin" />
+                  Retrieving site context and generating an answer
+                </div>
+                <Skeleton className="h-16 border" />
               </div>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-3 border-t">
+            ) : null}
+          </div>
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  );
+
+  const workspaceRail = (
+    <div className="flex h-full min-h-0 flex-col gap-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        <Card size="sm">
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <CardTitle>Workspace</CardTitle>
+                <CardDescription>{statusLine(workspace)}</CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline">Local Website RAG</Badge>
+                <Badge variant={tone.variant}>{tone.label}</Badge>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {workspaceError ? (
+              <Alert variant="destructive">
+                <Warning />
+                <AlertTitle>Workspace Error</AlertTitle>
+                <AlertDescription>{workspaceError}</AlertDescription>
+              </Alert>
+            ) : null}
+
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-medium">Index progress</span>
+                {workspace?.status === "indexing" ? (
+                  <SpinnerGap className="animate-spin text-muted-foreground" />
+                ) : null}
+              </div>
+              <Progress value={workspaceProgressValue(workspace)}>
+                <ProgressLabel>Website indexing</ProgressLabel>
+                <span className="ml-auto text-xs text-muted-foreground tabular-nums">
+                  {workspaceProgressValue(workspace)}%
+                </span>
+              </Progress>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1 border p-3">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Pages
+                </span>
+                <span className="text-lg font-medium tabular-nums">
+                  {workspace?.stats.pageCount ?? 0}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1 border p-3">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Chunks
+                </span>
+                <span className="text-lg font-medium tabular-nums">
+                  {workspace?.stats.chunkCount ?? 0}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1 border p-3">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Discovered
+                </span>
+                <span className="text-lg font-medium tabular-nums">
+                  {workspace?.crawl.discovered ?? 0}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1 border p-3">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Failed
+                </span>
+                <span className="text-lg font-medium tabular-nums">
+                  {workspace?.crawl.failed ?? 0}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-medium">Active root URL</span>
+              <span className="break-all text-xs text-muted-foreground">
+                {workspace?.rootUrl ?? "No active workspace"}
+              </span>
+            </div>
+
+            <div className="text-xs text-muted-foreground">
+              Models:{" "}
+              <span className="text-foreground">qwen3-embedding:0.6b</span> for
+              embeddings and <span className="text-foreground">lfm2:24b</span>{" "}
+              for chat.
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Index Site</CardTitle>
+            <CardDescription>
+              One same-origin site per workspace. Submitting a new URL replaces
+              the current local index.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <form className="flex flex-col gap-3" onSubmit={submitWorkspace}>
+              <Input
+                aria-label="Website URL"
+                autoComplete="off"
+                disabled={workspaceBusy}
+                placeholder="https://docs.example.com"
+                value={workspaceUrl}
+                onChange={(event) => setWorkspaceUrl(event.target.value)}
+              />
+              <div className="flex flex-wrap gap-2">
+                <Button disabled={workspaceBusy} type="submit">
+                  {workspaceBusy ? (
+                    <SpinnerGap
+                      className="animate-spin"
+                      data-icon="inline-start"
+                    />
+                  ) : (
+                    <GlobeHemisphereWest data-icon="inline-start" />
+                  )}
+                  {workspaceId ? "Reindex Site" : "Index Site"}
+                </Button>
+                <Button
+                  disabled={!workspaceId || workspaceBusy}
+                  type="button"
+                  variant="destructive"
+                  onClick={() => void clearWorkspace()}
+                >
+                  <Trash data-icon="inline-start" />
+                  Clear
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="flex min-h-0 flex-col">
+        <CardHeader className="border-b">
+          <CardTitle>Ask Site</CardTitle>
+          <CardDescription>
+            {ready
+              ? "The first chat step forces retrieval against the local vector index."
+              : "Chat unlocks after the website finishes indexing."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="min-h-0 flex-1 p-0">
+          <ScrollArea className="h-full">
+            <div className="flex flex-col gap-4 p-4">
               {!ready ? (
                 <Alert>
                   <LinkSimple />
@@ -654,11 +637,7 @@ export function SiteRagApp() {
                 onSubmit={submitPrompt}
               >
                 <Textarea
-                  disabled={
-                    !ready ||
-                    chatStatus === "submitted" ||
-                    chatStatus === "streaming"
-                  }
+                  disabled={!ready || busyChat}
                   placeholder={
                     ready
                       ? "Ask about the indexed site..."
@@ -667,23 +646,16 @@ export function SiteRagApp() {
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
                 />
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <span className="text-xs text-muted-foreground">
-                    {ready
-                      ? "The first chat step forces a retrieval tool call against the local vector index."
-                      : "The assistant stays disabled until the site is ready."}
+                    Storage stays local in a temporary workspace until you clear
+                    it.
                   </span>
                   <Button
-                    disabled={
-                      !ready ||
-                      !prompt.trim() ||
-                      chatStatus === "submitted" ||
-                      chatStatus === "streaming"
-                    }
+                    disabled={!ready || !prompt.trim() || busyChat}
                     type="submit"
                   >
-                    {chatStatus === "submitted" ||
-                    chatStatus === "streaming" ? (
+                    {busyChat ? (
                       <SpinnerGap
                         className="animate-spin"
                         data-icon="inline-start"
@@ -695,8 +667,36 @@ export function SiteRagApp() {
                   </Button>
                 </div>
               </form>
-            </CardFooter>
-          </Card>
+            </div>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  return (
+    <div className="h-svh overflow-hidden bg-background">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-linear-to-b from-primary/10 via-transparent to-transparent" />
+      <div className="relative flex h-full min-h-0 w-full flex-col overflow-auto p-3 md:p-4">
+        <div className="hidden h-full min-h-0 md:block">
+          <ResizablePanelGroup
+            className="min-h-0 gap-4"
+            id="vectorfetch-workspace-layout"
+            orientation="horizontal"
+          >
+            <ResizablePanel defaultSize={64} minSize={45}>
+              <div className="h-full min-h-0 pr-2">{conversationPane}</div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={36} minSize={24}>
+              <div className="h-full min-h-0 pl-2">{workspaceRail}</div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+
+        <div className="flex min-h-full flex-col gap-4 md:hidden">
+          <div className="min-h-[50svh]">{conversationPane}</div>
+          <div className="min-h-0">{workspaceRail}</div>
         </div>
       </div>
     </div>

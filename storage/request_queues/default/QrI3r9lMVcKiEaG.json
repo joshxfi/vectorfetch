@@ -1,9 +1,0 @@
-{
-	"id": "QrI3r9lMVcKiEaG",
-	"json": "{\"id\":\"QrI3r9lMVcKiEaG\",\"url\":\"https://jamesclear.com/exercise-habit\",\"loadedUrl\":\"https://jamesclear.com/exercise-habit\",\"uniqueKey\":\"https://jamesclear.com/exercise-habit\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:40.368Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/exercise-habit",
-	"url": "https://jamesclear.com/exercise-habit"
-}

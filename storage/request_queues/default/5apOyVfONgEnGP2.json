@@ -1,9 +1,0 @@
-{
-	"id": "5apOyVfONgEnGP2",
-	"json": "{\"id\":\"5apOyVfONgEnGP2\",\"url\":\"https://jamesclear.com/book/mindset\",\"loadedUrl\":\"https://www.amazon.com/gp/product/0345472322/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0345472322&linkCode=as2&tag=jamesclear-20&linkId=YOU4WTOVBQFK52HI\",\"uniqueKey\":\"https://jamesclear.com/book/mindset\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:36.944Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/book/mindset",
-	"url": "https://jamesclear.com/book/mindset"
-}

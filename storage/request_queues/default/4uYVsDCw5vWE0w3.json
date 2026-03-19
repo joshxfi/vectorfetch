@@ -1,9 +1,0 @@
-{
-	"id": "4uYVsDCw5vWE0w3",
-	"json": "{\"id\":\"4uYVsDCw5vWE0w3\",\"url\":\"https://jamesclear.com/schedule\",\"loadedUrl\":\"https://jamesclear.com/schedule\",\"uniqueKey\":\"https://jamesclear.com/schedule\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:35.706Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/schedule",
-	"url": "https://jamesclear.com/schedule"
-}

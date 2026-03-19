@@ -1,9 +1,0 @@
-{
-	"id": "T7tz3vDkEZPkowv",
-	"json": "{\"id\":\"T7tz3vDkEZPkowv\",\"url\":\"https://jamesclear.com/interviews\",\"loadedUrl\":\"https://jamesclear.com/interviews\",\"uniqueKey\":\"https://jamesclear.com/interviews\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:33.382Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/interviews",
-	"url": "https://jamesclear.com/interviews"
-}

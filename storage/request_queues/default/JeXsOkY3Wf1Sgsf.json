@@ -1,9 +1,0 @@
-{
-	"id": "JeXsOkY3Wf1Sgsf",
-	"json": "{\"id\":\"JeXsOkY3Wf1Sgsf\",\"url\":\"https://jamesclear.com/habits-scorecard\",\"loadedUrl\":\"https://jamesclear.com/habits-scorecard\",\"uniqueKey\":\"https://jamesclear.com/habits-scorecard\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:39.781Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/habits-scorecard",
-	"url": "https://jamesclear.com/habits-scorecard"
-}

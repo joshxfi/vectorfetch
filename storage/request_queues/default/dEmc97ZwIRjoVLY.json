@@ -1,9 +1,0 @@
-{
-	"id": "dEmc97ZwIRjoVLY",
-	"json": "{\"id\":\"dEmc97ZwIRjoVLY\",\"url\":\"https://jamesclear.com/candy-checkout\",\"loadedUrl\":\"https://jamesclear.com/candy-checkout\",\"uniqueKey\":\"https://jamesclear.com/candy-checkout\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:40.230Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/candy-checkout",
-	"url": "https://jamesclear.com/candy-checkout"
-}

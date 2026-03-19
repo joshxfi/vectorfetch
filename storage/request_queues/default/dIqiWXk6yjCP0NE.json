@@ -1,9 +1,0 @@
-{
-	"id": "dIqiWXk6yjCP0NE",
-	"json": "{\"id\":\"dIqiWXk6yjCP0NE\",\"url\":\"https://jamesclear.com/book/the-war-of-art\",\"loadedUrl\":\"https://www.amazon.com/gp/product/1936891026/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1936891026&linkCode=as2&tag=jamesclear-20&linkId=7FDOJMMZ57S55VY6\",\"uniqueKey\":\"https://jamesclear.com/book/the-war-of-art\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:37.200Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/book/the-war-of-art",
-	"url": "https://jamesclear.com/book/the-war-of-art"
-}

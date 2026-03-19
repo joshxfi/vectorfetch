@@ -1,9 +1,0 @@
-{
-	"id": "1jrYfoGWhQNz2Of",
-	"json": "{\"id\":\"1jrYfoGWhQNz2Of\",\"url\":\"https://jamesclear.com/book/breakpoint-and-beyond\",\"loadedUrl\":\"https://www.amazon.com/gp/product/0887305474/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0887305474&linkCode=as2&tag=jamesclear-20&linkId=MS65GCKQOH3SXGFE\",\"uniqueKey\":\"https://jamesclear.com/book/breakpoint-and-beyond\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:39.219Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/book/breakpoint-and-beyond",
-	"url": "https://jamesclear.com/book/breakpoint-and-beyond"
-}

@@ -1,9 +1,0 @@
-{
-	"id": "TJjgSkgCgXYu0o1",
-	"json": "{\"id\":\"TJjgSkgCgXYu0o1\",\"url\":\"https://jamesclear.com/plan-for-chaos\",\"loadedUrl\":\"https://jamesclear.com/plan-for-chaos\",\"uniqueKey\":\"https://jamesclear.com/plan-for-chaos\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:39.364Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/plan-for-chaos",
-	"url": "https://jamesclear.com/plan-for-chaos"
-}

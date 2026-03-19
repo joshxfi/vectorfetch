@@ -1,9 +1,0 @@
-{
-	"id": "blSHEPvMQFIn62i",
-	"json": "{\"id\":\"blSHEPvMQFIn62i\",\"url\":\"https://jamesclear.com/getting-simple\",\"loadedUrl\":\"https://jamesclear.com/getting-simple\",\"uniqueKey\":\"https://jamesclear.com/getting-simple\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:33.023Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/getting-simple",
-	"url": "https://jamesclear.com/getting-simple"
-}

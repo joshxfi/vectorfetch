@@ -1,9 +1,0 @@
-{
-	"id": "gaMCXUpr63CzDkr",
-	"json": "{\"id\":\"gaMCXUpr63CzDkr\",\"url\":\"https://jamesclear.com/measuring\",\"loadedUrl\":\"https://jamesclear.com/measuring\",\"uniqueKey\":\"https://jamesclear.com/measuring\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:38.063Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/measuring",
-	"url": "https://jamesclear.com/measuring"
-}

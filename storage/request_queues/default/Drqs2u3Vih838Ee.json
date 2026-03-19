@@ -1,9 +1,0 @@
-{
-	"id": "Drqs2u3Vih838Ee",
-	"json": "{\"id\":\"Drqs2u3Vih838Ee\",\"url\":\"https://jamesclear.com/\",\"loadedUrl\":\"https://jamesclear.com/\",\"uniqueKey\":\"https://jamesclear.com\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:32.916Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com",
-	"url": "https://jamesclear.com/"
-}

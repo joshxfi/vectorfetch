@@ -1,9 +1,0 @@
-{
-	"id": "e4fBqSbhENbbOPZ",
-	"json": "{\"id\":\"e4fBqSbhENbbOPZ\",\"url\":\"https://jamesclear.com/book/the-slight-edge\",\"loadedUrl\":\"https://www.amazon.com/gp/product/1626340463/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=earmorboo-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1626340463&linkId=d9ff623ec1221f372ec99101c355d0b6\",\"uniqueKey\":\"https://jamesclear.com/book/the-slight-edge\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:43.048Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/book/the-slight-edge",
-	"url": "https://jamesclear.com/book/the-slight-edge"
-}

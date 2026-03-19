@@ -1,9 +1,0 @@
-{
-	"id": "wFNvlDpDmqqAMvt",
-	"json": "{\"id\":\"wFNvlDpDmqqAMvt\",\"url\":\"https://jamesclear.com/2014-integrity-report\",\"loadedUrl\":\"https://jamesclear.com/2014-integrity-report\",\"uniqueKey\":\"https://jamesclear.com/2014-integrity-report\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:37.760Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/2014-integrity-report",
-	"url": "https://jamesclear.com/2014-integrity-report"
-}

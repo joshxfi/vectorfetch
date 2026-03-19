@@ -1,9 +1,0 @@
-{
-	"id": "XSXpKyEujCoMl0l",
-	"json": "{\"id\":\"XSXpKyEujCoMl0l\",\"url\":\"https://jamesclear.com/audiobook/mindset\",\"loadedUrl\":\"https://www.amazon.com/gp/product/B001U5P7CK/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B001U5P7CK&linkCode=as2&tag=jamesclear-20&linkId=YJ446JCSEJJSIE3U\",\"uniqueKey\":\"https://jamesclear.com/audiobook/mindset\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:35.525Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/audiobook/mindset",
-	"url": "https://jamesclear.com/audiobook/mindset"
-}

@@ -1,9 +1,0 @@
-{
-	"id": "5dAEjVzsA7hl84v",
-	"json": "{\"id\":\"5dAEjVzsA7hl84v\",\"url\":\"https://jamesclear.com/futsal\",\"loadedUrl\":\"https://jamesclear.com/futsal\",\"uniqueKey\":\"https://jamesclear.com/futsal\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:34.336Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/futsal",
-	"url": "https://jamesclear.com/futsal"
-}

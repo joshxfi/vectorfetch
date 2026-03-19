@@ -1,9 +1,0 @@
-{
-	"id": "frYAWEHFVKT5Tkr",
-	"json": "{\"id\":\"frYAWEHFVKT5Tkr\",\"url\":\"https://jamesclear.com/master-one-thing\",\"loadedUrl\":\"https://jamesclear.com/master-one-thing\",\"uniqueKey\":\"https://jamesclear.com/master-one-thing\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:33.273Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://jamesclear.com/master-one-thing",
-	"url": "https://jamesclear.com/master-one-thing"
-}

@@ -1,4 +1,8 @@
-import { CheerioCrawler, type CheerioCrawlingContext } from "@crawlee/cheerio";
+import {
+  CheerioCrawler,
+  type CheerioCrawlingContext,
+  Configuration,
+} from "@crawlee/cheerio";
 
 import { MAX_CRAWL_PAGES } from "@/lib/rag/constants";
 import { extractPageContent } from "@/lib/rag/text";
@@ -68,45 +72,55 @@ export async function crawlSite({
     await onProgress?.({ ...progress });
   };
 
-  const crawler = new CheerioCrawler({
-    maxRequestsPerCrawl: maxPages,
-    maxRequestRetries: 1,
-    requestHandlerTimeoutSecs: 45,
-    async requestHandler({ $, request, addRequests }) {
-      const currentUrl =
-        normalizeCrawlUrl(request.loadedUrl ?? request.url) ?? rootUrl;
-
-      progress.visited += 1;
-
-      const page = extractPageContent({ $, url: currentUrl });
-      if (!page || seenContentHashes.has(page.contentHash)) {
-        progress.skipped += 1;
-      } else {
-        seenContentHashes.add(page.contentHash);
-        pages.push(page);
-        progress.indexedPages = pages.length;
-      }
-
-      const links = uniqueLinks({
-        $,
-        currentUrl,
-        origin: rootOrigin,
-        seenUrls,
-        limit: maxPages,
-      });
-
-      if (links.length > 0) {
-        progress.discovered = seenUrls.size;
-        await addRequests(links);
-      }
-
-      await publishProgress();
-    },
-    async failedRequestHandler() {
-      progress.failed += 1;
-      await publishProgress();
-    },
+  // Use an isolated in-memory Crawlee storage per crawl so repeated
+  // indexing jobs do not reuse the persisted default request queue.
+  const crawlerConfig = new Configuration({
+    persistStorage: false,
+    purgeOnStart: true,
   });
+
+  const crawler = new CheerioCrawler(
+    {
+      maxRequestsPerCrawl: maxPages,
+      maxRequestRetries: 1,
+      requestHandlerTimeoutSecs: 45,
+      async requestHandler({ $, request, addRequests }) {
+        const currentUrl =
+          normalizeCrawlUrl(request.loadedUrl ?? request.url) ?? rootUrl;
+
+        progress.visited += 1;
+
+        const page = extractPageContent({ $, url: currentUrl });
+        if (!page || seenContentHashes.has(page.contentHash)) {
+          progress.skipped += 1;
+        } else {
+          seenContentHashes.add(page.contentHash);
+          pages.push(page);
+          progress.indexedPages = pages.length;
+        }
+
+        const links = uniqueLinks({
+          $,
+          currentUrl,
+          origin: rootOrigin,
+          seenUrls,
+          limit: maxPages,
+        });
+
+        if (links.length > 0) {
+          progress.discovered = seenUrls.size;
+          await addRequests(links);
+        }
+
+        await publishProgress();
+      },
+      async failedRequestHandler() {
+        progress.failed += 1;
+        await publishProgress();
+      },
+    },
+    crawlerConfig,
+  );
 
   await crawler.run([rootUrl]);
 
