@@ -1,0 +1,9 @@
+{
+	"id": "zvcXiKrAINvkyAo",
+	"json": "{\"id\":\"zvcXiKrAINvkyAo\",\"url\":\"https://jamesclear.com/habit-journal\",\"loadedUrl\":\"https://jamesclear.com/habit-journal\",\"uniqueKey\":\"https://jamesclear.com/habit-journal\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:33.314Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/habit-journal",
+	"url": "https://jamesclear.com/habit-journal"
+}

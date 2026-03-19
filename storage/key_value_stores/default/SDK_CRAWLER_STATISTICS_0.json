@@ -1,0 +1,39 @@
+{
+  "requestsFinished": 198,
+  "requestsFailed": 2,
+  "requestsRetries": 0,
+  "requestsFailedPerMinute": 11,
+  "requestsFinishedPerMinute": 1093,
+  "requestMinDurationMillis": 55,
+  "requestMaxDurationMillis": 3660,
+  "requestTotalFailedDurationMillis": 827,
+  "requestTotalFinishedDurationMillis": 84722,
+  "crawlerStartedAt": "2026-03-19T16:24:32.217Z",
+  "crawlerFinishedAt": "2026-03-19T16:24:43.067Z",
+  "statsPersistedAt": "2026-03-19T16:24:43.067Z",
+  "crawlerRuntimeMillis": 10866,
+  "crawlerLastStartTimestamp": 1773937472201,
+  "requestRetryHistogram": [
+    200
+  ],
+  "statsId": 0,
+  "requestAvgFailedDurationMillis": 414,
+  "requestAvgFinishedDurationMillis": 428,
+  "requestTotalDurationMillis": 85549,
+  "requestsTotal": 200,
+  "requestsWithStatusCode": {
+    "404": 3
+  },
+  "errors": {
+    "/Users/joshxfi/projects/open-source/vectorfetch/node_modules/@crawlee/http/internals/http-crawler.js:618:19": {
+      "missing error code": {
+        "Error": {
+          "Resource _ served Content-Type _ but only text/html, text/xml, application/xhtml+xml, application/xml, application/json are allowed. Skipping resource.": {
+            "count": 2
+          }
+        }
+      }
+    }
+  },
+  "retryErrors": {}
+}

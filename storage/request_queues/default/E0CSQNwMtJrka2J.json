@@ -1,0 +1,9 @@
+{
+	"id": "E0CSQNwMtJrka2J",
+	"json": "{\"id\":\"E0CSQNwMtJrka2J\",\"url\":\"https://jamesclear.com/paper-clips\",\"loadedUrl\":\"https://jamesclear.com/paper-clips\",\"uniqueKey\":\"https://jamesclear.com/paper-clips\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:39.367Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/paper-clips",
+	"url": "https://jamesclear.com/paper-clips"
+}

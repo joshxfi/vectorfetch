@@ -1,0 +1,9 @@
+{
+	"id": "ZEv7zSpTFzuTAgb",
+	"json": "{\"id\":\"ZEv7zSpTFzuTAgb\",\"url\":\"https://jamesclear.com/your-job\",\"loadedUrl\":\"https://jamesclear.com/your-job\",\"uniqueKey\":\"https://jamesclear.com/your-job\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:34.688Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/your-job",
+	"url": "https://jamesclear.com/your-job"
+}

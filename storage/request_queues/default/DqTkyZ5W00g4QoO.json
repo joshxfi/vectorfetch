@@ -1,0 +1,9 @@
+{
+	"id": "DqTkyZ5W00g4QoO",
+	"json": "{\"id\":\"DqTkyZ5W00g4QoO\",\"url\":\"https://jamesclear.com/habit-tracker\",\"loadedUrl\":\"https://jamesclear.com/habit-tracker\",\"uniqueKey\":\"https://jamesclear.com/habit-tracker\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:33.068Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/habit-tracker",
+	"url": "https://jamesclear.com/habit-tracker"
+}

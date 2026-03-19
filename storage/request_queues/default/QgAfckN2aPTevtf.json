@@ -1,0 +1,9 @@
+{
+	"id": "QgAfckN2aPTevtf",
+	"json": "{\"id\":\"QgAfckN2aPTevtf\",\"url\":\"https://jamesclear.com/read-more\",\"loadedUrl\":\"https://jamesclear.com/read-more\",\"uniqueKey\":\"https://jamesclear.com/read-more\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:37.764Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/read-more",
+	"url": "https://jamesclear.com/read-more"
+}

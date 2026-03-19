@@ -1,0 +1,9 @@
+{
+	"id": "vdJZr7nJWRacAXf",
+	"json": "{\"id\":\"vdJZr7nJWRacAXf\",\"url\":\"https://jamesclear.com/create-things\",\"loadedUrl\":\"https://jamesclear.com/create-things\",\"uniqueKey\":\"https://jamesclear.com/create-things\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:35.628Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/create-things",
+	"url": "https://jamesclear.com/create-things"
+}

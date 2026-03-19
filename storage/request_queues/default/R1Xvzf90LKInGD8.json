@@ -1,0 +1,9 @@
+{
+	"id": "R1Xvzf90LKInGD8",
+	"json": "{\"id\":\"R1Xvzf90LKInGD8\",\"url\":\"https://jamesclear.com/productivity\",\"loadedUrl\":\"https://jamesclear.com/productivity\",\"uniqueKey\":\"https://jamesclear.com/productivity\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:33.223Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/productivity",
+	"url": "https://jamesclear.com/productivity"
+}

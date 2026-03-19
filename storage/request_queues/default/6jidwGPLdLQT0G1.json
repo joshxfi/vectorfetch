@@ -1,0 +1,9 @@
+{
+	"id": "6jidwGPLdLQT0G1",
+	"json": "{\"id\":\"6jidwGPLdLQT0G1\",\"url\":\"https://jamesclear.com/best-books/biographies\",\"loadedUrl\":\"https://jamesclear.com/best-books/biographies\",\"uniqueKey\":\"https://jamesclear.com/best-books/biographies\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:33.485Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/best-books/biographies",
+	"url": "https://jamesclear.com/best-books/biographies"
+}

@@ -1,0 +1,9 @@
+{
+	"id": "voHUi2NmeyjVTtd",
+	"json": "{\"id\":\"voHUi2NmeyjVTtd\",\"url\":\"https://jamesclear.com/stay-on-the-bus\",\"loadedUrl\":\"https://jamesclear.com/stay-on-the-bus\",\"uniqueKey\":\"https://jamesclear.com/stay-on-the-bus\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:32.957Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/stay-on-the-bus",
+	"url": "https://jamesclear.com/stay-on-the-bus"
+}

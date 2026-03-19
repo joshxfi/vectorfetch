@@ -1,0 +1,9 @@
+{
+	"id": "uN01AKJmNMoSpWR",
+	"json": "{\"id\":\"uN01AKJmNMoSpWR\",\"url\":\"https://jamesclear.com/book/adapt\",\"loadedUrl\":\"https://www.amazon.com/gp/product/1250007550/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=jamesclear-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1250007550&linkId=19d1a289d25328a9503132bf535e7db6\",\"uniqueKey\":\"https://jamesclear.com/book/adapt\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"state\":4}},\"handledAt\":\"2026-03-19T16:24:39.658Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://jamesclear.com/book/adapt",
+	"url": "https://jamesclear.com/book/adapt"
+}
