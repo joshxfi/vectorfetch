@@ -6,6 +6,8 @@ Vectorfetch lets you submit a website root URL, crawl that site locally, turn
 the readable content into chunks and embeddings, store them in a temporary
 local vector index, and chat against the indexed site with local models.
 
+<img width="1512" height="949" alt="Preview" src="https://github.com/user-attachments/assets/4a2ecddc-870e-47f2-8137-2cf878f27c57" />
+
 ## Features
 
 - Crawl a same-origin website recursively from a single root URL
