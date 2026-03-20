@@ -107,13 +107,16 @@ export function ConversationPanel({
   const contentRef = useRef<HTMLDivElement | null>(null);
   const shouldStickRef = useRef(true);
   const previousSignatureRef = useRef("");
+  const lastMessage = messages.at(-1);
+  const showPendingResponseLoader =
+    busyChat && lastMessage?.role !== "assistant";
   const lastMessageSignature = useMemo(() => {
-    const lastMessage = messages.at(-1);
-    if (!lastMessage) {
+    const latestMessage = messages.at(-1);
+    if (!latestMessage) {
       return "empty";
     }
 
-    return `${lastMessage.id}:${messageText(lastMessage).length}:${messages.length}`;
+    return `${latestMessage.id}:${messageText(latestMessage).length}:${messages.length}`;
   }, [messages]);
 
   useEffect(() => {
@@ -247,6 +250,23 @@ export function ConversationPanel({
                 </div>
               );
             })}
+
+            {showPendingResponseLoader ? (
+              <div className="flex w-full flex-col gap-3 items-stretch">
+                <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
+                  <SpinnerGap className="animate-spin shrink-0" />
+                  <span className="truncate">
+                    Retrieving site context and generating an answer
+                  </span>
+                </div>
+                <div className="flex w-full flex-col gap-3 border px-4 py-3">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                  <Skeleton className="h-4 w-3/5" />
+                </div>
+              </div>
+            ) : null}
           </div>
         </ScrollArea>
       </CardContent>
