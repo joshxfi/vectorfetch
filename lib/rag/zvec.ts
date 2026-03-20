@@ -13,6 +13,7 @@ import {
   ZVecOpen,
 } from "@zvec/zvec";
 
+import { ZVEC_INSERT_BATCH_SIZE } from "@/lib/rag/constants";
 import type { ChunkRecord, SearchChunkResult } from "@/lib/rag/types";
 
 declare global {
@@ -26,14 +27,22 @@ function ensureZVecInitialized() {
   }
 }
 
-export function createChunkCollection({
+export async function createChunkCollection({
   collectionPath,
   chunks,
   embeddings,
+  batchSize = ZVEC_INSERT_BATCH_SIZE,
+  onBatchStored,
 }: {
   collectionPath: string;
   chunks: ChunkRecord[];
   embeddings: number[][];
+  batchSize?: number;
+  onBatchStored?: (progress: {
+    inserted: number;
+    total: number;
+    batchSize: number;
+  }) => Promise<void> | void;
 }) {
   ensureZVecInitialized();
 
@@ -65,25 +74,39 @@ export function createChunkCollection({
 
   const collection = ZVecCreateAndOpen(collectionPath, schema);
 
-  const insertStatuses = collection.insertSync(
-    chunks.map((chunk, index) => ({
-      id: chunk.id,
-      vectors: { embedding: embeddings[index] },
-      fields: {
-        url: chunk.url,
-        title: chunk.title,
-        path: chunk.path,
-        text: chunk.text,
-        chunkIndex: chunk.chunkIndex,
-        pageIndex: chunk.pageIndex,
-      },
-    })),
-  );
+  let inserted = 0;
 
-  for (const status of insertStatuses) {
-    if (!status.ok) {
-      throw new Error(status.message || "Failed to insert vectors into zvec.");
+  for (let index = 0; index < chunks.length; index += batchSize) {
+    const batch = chunks.slice(index, index + batchSize);
+    const insertStatuses = collection.insertSync(
+      batch.map((chunk, batchIndex) => ({
+        id: chunk.id,
+        vectors: { embedding: embeddings[index + batchIndex] },
+        fields: {
+          url: chunk.url,
+          title: chunk.title,
+          path: chunk.path,
+          text: chunk.text,
+          chunkIndex: chunk.chunkIndex,
+          pageIndex: chunk.pageIndex,
+        },
+      })),
+    );
+
+    for (const status of insertStatuses) {
+      if (!status.ok) {
+        throw new Error(
+          status.message || "Failed to insert vectors into zvec.",
+        );
+      }
     }
+
+    inserted += batch.length;
+    await onBatchStored?.({
+      inserted,
+      total: chunks.length,
+      batchSize: batch.length,
+    });
   }
 
   return collection;

@@ -242,14 +242,14 @@ async function buildWorkspaceIndex(entry: WorkspaceEntry) {
           {
             kind: "failed-page",
             phase: "crawling",
-            detail: `Failed to crawl ${page.path}.`,
+            detail: page.message,
             url: page.url,
             path: page.path,
-            title: "Failed page",
+            title: page.blocked ? "Blocked page" : "Failed page",
             count: 1,
             progressCurrent: nextProgress.failed,
             progressTotal: nextProgress.discovered,
-            summaryKey: "crawl-failed",
+            summaryKey: page.blocked ? "crawl-blocked" : "crawl-failed",
           },
         ),
       );
@@ -261,6 +261,12 @@ async function buildWorkspaceIndex(entry: WorkspaceEntry) {
   }
 
   if (pages.length === 0) {
+    if (progress.failed > 0) {
+      throw new Error(
+        "Crawl completed without any indexable text pages. The site may be blocking crawler requests or serving little readable HTML.",
+      );
+    }
+
     throw new Error("Crawl completed without any indexable text pages.");
   }
 
@@ -366,38 +372,41 @@ async function buildWorkspaceIndex(entry: WorkspaceEntry) {
   }));
 
   closeChunkCollection(entry.collection);
-  entry.collection = createChunkCollection({
+  entry.collection = await createChunkCollection({
     collectionPath: entry.manifest.collectionPath,
     chunks,
     embeddings,
+    onBatchStored: async ({ inserted, total, batchSize }) => {
+      await queueEntryMutation(entry, (manifest) =>
+        withActivity(
+          withPipeline(manifest, {
+            storedChunks: inserted,
+          }),
+          {
+            kind: "stored-batch",
+            phase: "storing",
+            detail: `Stored ${inserted} of ${total} chunks in zvec.`,
+            count: batchSize,
+            progressCurrent: inserted,
+            progressTotal: total,
+            summaryKey: "store-progress",
+          },
+        ),
+      );
+    },
   });
 
   await queueEntryMutation(entry, (manifest) => {
-    let nextManifest = withActivity(
-      withPipeline(manifest, {
-        storedChunks: chunks.length,
-      }),
+    const nextManifest = withActivity(
       {
-        kind: "stored-batch",
-        phase: "storing",
-        detail: `Stored ${chunks.length} of ${chunks.length} chunks in zvec.`,
-        count: chunks.length,
-        progressCurrent: chunks.length,
-        progressTotal: chunks.length,
-        summaryKey: "store-progress",
-      },
-    );
-
-    nextManifest = withActivity(
-      {
-        ...nextManifest,
+        ...manifest,
         status: "ready",
         phase: "ready",
         error: null,
         embeddingDimensions: embeddings[0]?.length ?? null,
         crawl: progress,
         pipeline: {
-          ...mergePipelineProgress(nextManifest.pipeline, progress),
+          ...mergePipelineProgress(manifest.pipeline, progress),
           chunkedPages: pages.length,
           embeddedChunks: chunks.length,
           storedChunks: chunks.length,

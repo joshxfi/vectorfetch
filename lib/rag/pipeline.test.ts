@@ -31,7 +31,7 @@ describe("rag pipeline smoke", () => {
     );
   });
 
-  test("chunks pages, indexes them in zvec, and retrieves a relevant source", () => {
+  test("chunks pages, indexes them in zvec, and retrieves a relevant source", async () => {
     const pages: CrawledPage[] = [
       {
         url: "https://docs.example.com",
@@ -66,7 +66,7 @@ describe("rag pipeline smoke", () => {
     const workspaceId = randomUUID();
     workspaceIds.push(workspaceId);
 
-    const collection = createChunkCollection({
+    const collection = await createChunkCollection({
       collectionPath: workspaceCollectionPath(workspaceId),
       chunks,
       embeddings: chunks.map((chunk) => fakeEmbedding(chunk.text)),

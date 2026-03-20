@@ -91,6 +91,14 @@ export interface CrawledPage {
   contentHash: string;
 }
 
+export interface CrawlFailure {
+  url: string;
+  path: string;
+  statusCode: number | null;
+  blocked: boolean;
+  message: string;
+}
+
 export interface ChunkRecord {
   id: string;
   url: string;
