@@ -4,18 +4,19 @@ import type { UIMessage } from "ai";
 
 import type {
   SearchChunkResult,
-  WorkspaceManifest,
-  WorkspacePhase,
+  SitePhase,
+  SiteSessionManifest,
 } from "@/lib/rag/types";
 
-export const WORKSPACE_STORAGE_KEY = "vectorfetch:workspace-id";
+export const ACTIVE_SITE_STORAGE_KEY = "vectorfetch:active-site-id";
+export const LEGACY_WORKSPACE_STORAGE_KEY = "vectorfetch:workspace-id";
 
 type SearchToolOutput = {
   query: string;
   results: SearchChunkResult[];
 };
 
-const phaseWeights: Record<WorkspacePhase, [number, number]> = {
+const phaseWeights: Record<SitePhase, [number, number]> = {
   crawling: [0, 55],
   chunking: [55, 72],
   embedding: [72, 90],
@@ -24,65 +25,56 @@ const phaseWeights: Record<WorkspacePhase, [number, number]> = {
   error: [0, 100],
 };
 
-export function workspacePhaseRatio(workspace: WorkspaceManifest) {
-  switch (workspace.phase) {
+export function sitePhaseRatio(site: SiteSessionManifest) {
+  switch (site.phase) {
     case "crawling":
       return (
-        workspace.pipeline.visitedPages /
-        Math.max(workspace.pipeline.discoveredPages, 1)
+        site.pipeline.visitedPages / Math.max(site.pipeline.discoveredPages, 1)
       );
     case "chunking":
-      return (
-        workspace.pipeline.chunkedPages / Math.max(workspace.stats.pageCount, 1)
-      );
+      return site.pipeline.chunkedPages / Math.max(site.stats.pageCount, 1);
     case "embedding":
-      return (
-        workspace.pipeline.embeddedChunks /
-        Math.max(workspace.stats.chunkCount, 1)
-      );
+      return site.pipeline.embeddedChunks / Math.max(site.stats.chunkCount, 1);
     case "storing":
-      return (
-        workspace.pipeline.storedChunks /
-        Math.max(workspace.stats.chunkCount, 1)
-      );
+      return site.pipeline.storedChunks / Math.max(site.stats.chunkCount, 1);
     case "ready":
       return 1;
     case "error":
-      return workspace.pipeline.storedChunks > 0 ? 0.98 : 0;
+      return site.pipeline.storedChunks > 0 ? 0.98 : 0;
   }
 }
 
-export function workspaceProgressValue(workspace: WorkspaceManifest | null) {
-  if (!workspace) {
+export function siteProgressValue(site: SiteSessionManifest | null) {
+  if (!site) {
     return 0;
   }
 
-  if (workspace.status === "ready") {
+  if (site.status === "ready") {
     return 100;
   }
 
-  const [start, end] = phaseWeights[workspace.phase];
-  const ratio = Math.max(0, Math.min(1, workspacePhaseRatio(workspace)));
+  const [start, end] = phaseWeights[site.phase];
+  const ratio = Math.max(0, Math.min(1, sitePhaseRatio(site)));
 
   return Math.round(start + (end - start) * ratio);
 }
 
-export function workspaceTone(workspace: WorkspaceManifest | null) {
-  if (!workspace) {
+export function siteTone(site: SiteSessionManifest | null) {
+  if (!site) {
     return {
       label: "No site indexed",
       variant: "outline" as const,
     };
   }
 
-  if (workspace.status === "ready") {
+  if (site.status === "ready") {
     return {
       label: "Ready",
       variant: "secondary" as const,
     };
   }
 
-  if (workspace.status === "error") {
+  if (site.status === "error") {
     return {
       label: "Needs attention",
       variant: "destructive" as const,
@@ -95,40 +87,28 @@ export function workspaceTone(workspace: WorkspaceManifest | null) {
   };
 }
 
-export function statusLine(workspace: WorkspaceManifest | null) {
-  if (!workspace) {
+export function siteStatusLine(site: SiteSessionManifest | null) {
+  if (!site) {
     return "Submit a root URL to start crawling and indexing a site.";
   }
 
-  if (workspace.status === "ready") {
-    return `${workspace.stats.pageCount} pages indexed into ${workspace.stats.chunkCount} local chunks.`;
+  if (site.status === "ready") {
+    return `${site.stats.pageCount} pages indexed into ${site.stats.chunkCount} local chunks.`;
   }
 
-  if (workspace.status === "error") {
-    return workspace.error ?? "Indexing failed.";
+  if (site.status === "error") {
+    return site.error ?? "Indexing failed.";
   }
 
-  switch (workspace.phase) {
+  switch (site.phase) {
     case "crawling":
-      return `Crawling ${workspace.pipeline.visitedPages}/${Math.max(
-        workspace.pipeline.discoveredPages,
-        1,
-      )} discovered pages.`;
+      return `Crawling ${site.pipeline.visitedPages}/${Math.max(site.pipeline.discoveredPages, 1)} discovered pages.`;
     case "chunking":
-      return `Chunking ${workspace.pipeline.chunkedPages}/${Math.max(
-        workspace.stats.pageCount,
-        1,
-      )} scraped pages.`;
+      return `Chunking ${site.pipeline.chunkedPages}/${Math.max(site.stats.pageCount, 1)} scraped pages.`;
     case "embedding":
-      return `Embedding ${workspace.pipeline.embeddedChunks}/${Math.max(
-        workspace.stats.chunkCount,
-        1,
-      )} chunks locally.`;
+      return `Embedding ${site.pipeline.embeddedChunks}/${Math.max(site.stats.chunkCount, 1)} chunks locally.`;
     case "storing":
-      return `Writing ${workspace.pipeline.storedChunks}/${Math.max(
-        workspace.stats.chunkCount,
-        1,
-      )} chunks into zvec.`;
+      return `Writing ${site.pipeline.storedChunks}/${Math.max(site.stats.chunkCount, 1)} chunks into zvec.`;
     default:
       return "Preparing the local index.";
   }

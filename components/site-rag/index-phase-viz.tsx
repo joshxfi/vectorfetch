@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 
 import { buildIndexPhaseVizModel } from "@/components/site-rag/index-phase-viz-data";
-import type { WorkspaceManifest } from "@/lib/rag/types";
+import type { SiteSessionManifest } from "@/lib/rag/types";
 import { cn } from "@/lib/utils";
 
 type IndexPhaseVizProps = {
-  workspace: WorkspaceManifest | null;
+  site: SiteSessionManifest | null;
 };
 
-export function IndexPhaseViz({ workspace }: IndexPhaseVizProps) {
+export function IndexPhaseViz({ site }: IndexPhaseVizProps) {
   const [frame, setFrame] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -29,7 +29,7 @@ export function IndexPhaseViz({ workspace }: IndexPhaseVizProps) {
   }, []);
 
   useEffect(() => {
-    if (!workspace || workspace.status !== "indexing" || reducedMotion) {
+    if (!site || site.status !== "indexing" || reducedMotion) {
       return;
     }
 
@@ -40,9 +40,9 @@ export function IndexPhaseViz({ workspace }: IndexPhaseVizProps) {
     return () => {
       window.clearInterval(interval);
     };
-  }, [reducedMotion, workspace]);
+  }, [reducedMotion, site]);
 
-  const model = buildIndexPhaseVizModel(workspace, reducedMotion ? 0 : frame);
+  const model = buildIndexPhaseVizModel(site, reducedMotion ? 0 : frame);
 
   return (
     <div className="min-h-[14rem] flex-1 md:min-h-0">

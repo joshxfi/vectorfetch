@@ -53,12 +53,12 @@ export function ConversationPanel({
           <div className="flex flex-col gap-1">
             <CardTitle>Conversation</CardTitle>
             <CardDescription>
-              Ask about the indexed site and inspect the retrieved sources tied
+              Ask about the active site and inspect the retrieved sources tied
               to each answer.
             </CardDescription>
           </div>
           <Badge variant={ready ? "secondary" : "outline"}>
-            {ready ? "Retrieval on" : "Waiting for index"}
+            {ready ? "Retrieval on" : "Waiting for site"}
           </Badge>
         </div>
       </CardHeader>

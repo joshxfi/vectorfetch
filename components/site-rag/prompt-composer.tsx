@@ -29,7 +29,7 @@ export function PromptComposer({
           <LinkSimple />
           <AlertTitle>Index a site first</AlertTitle>
           <AlertDescription>
-            Chat is enabled after the workspace finishes crawling and embedding.
+            Chat is enabled after the site finishes crawling and embedding.
           </AlertDescription>
         </Alert>
       ) : null}

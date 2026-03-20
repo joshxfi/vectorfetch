@@ -6,8 +6,8 @@ import { useState } from "react";
 
 import { ConversationPanel } from "@/components/site-rag/conversation-panel";
 import { IndexFlowPanel } from "@/components/site-rag/index-flow-panel";
-import { useWorkspaceSession } from "@/components/site-rag/use-workspace-session";
-import { WorkspaceRail } from "@/components/site-rag/workspace-rail";
+import { SiteRail } from "@/components/site-rag/site-rail";
+import { useSiteSession } from "@/components/site-rag/use-site-session";
 
 export function SiteRagShell() {
   const [prompt, setPrompt] = useState("");
@@ -21,15 +21,15 @@ export function SiteRagShell() {
   } = useChat();
 
   const {
-    clearWorkspace,
-    submitWorkspace,
-    workspace,
-    workspaceBusy,
-    workspaceError,
-    workspaceId,
-    workspaceUrl,
-    setWorkspaceUrl,
-  } = useWorkspaceSession({
+    clearSite,
+    submitSite,
+    site,
+    siteBusy,
+    siteError,
+    siteId,
+    siteUrl,
+    setSiteUrl,
+  } = useSiteSession({
     onConversationReset: () => {
       setMessages([]);
       clearError();
@@ -39,7 +39,7 @@ export function SiteRagShell() {
   async function submitPrompt(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!prompt.trim() || !workspaceId || workspace?.status !== "ready") {
+    if (!prompt.trim() || !siteId || site?.status !== "ready") {
       return;
     }
 
@@ -53,13 +53,13 @@ export function SiteRagShell() {
       },
       {
         body: {
-          workspaceId,
+          siteId,
         },
       },
     );
   }
 
-  const ready = workspace?.status === "ready";
+  const ready = site?.status === "ready";
   const busyChat = chatStatus === "submitted" || chatStatus === "streaming";
 
   return (
@@ -79,22 +79,19 @@ export function SiteRagShell() {
           </div>
 
           <div className="min-h-[36svh] md:flex md:h-full md:min-h-0">
-            <IndexFlowPanel
-              workspace={workspace}
-              workspaceError={workspaceError}
-            />
+            <IndexFlowPanel site={site} siteError={siteError} />
           </div>
 
           <div className="min-h-0 md:flex md:h-full md:min-h-0">
-            <WorkspaceRail
-              workspace={workspace}
-              workspaceBusy={workspaceBusy}
-              workspaceError={workspaceError}
-              workspaceId={workspaceId}
-              workspaceUrl={workspaceUrl}
-              onClearWorkspace={() => void clearWorkspace()}
-              onSubmitWorkspace={submitWorkspace}
-              onWorkspaceUrlChange={setWorkspaceUrl}
+            <SiteRail
+              site={site}
+              siteBusy={siteBusy}
+              siteError={siteError}
+              siteId={siteId}
+              siteUrl={siteUrl}
+              onClearSite={() => void clearSite()}
+              onSubmitSite={submitSite}
+              onSiteUrlChange={setSiteUrl}
             />
           </div>
         </div>

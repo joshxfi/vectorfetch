@@ -12,13 +12,13 @@ export async function GET(
 ) {
   const params = paramsSchema.safeParse(await context.params);
   if (!params.success) {
-    return Response.json({ error: "Invalid workspace id." }, { status: 400 });
+    return Response.json({ error: "Invalid site id." }, { status: 400 });
   }
 
-  const workspace = await getWorkspaceSnapshot(params.data.id);
-  if (!workspace) {
-    return Response.json({ error: "Workspace not found." }, { status: 404 });
+  const site = await getWorkspaceSnapshot(params.data.id);
+  if (!site) {
+    return Response.json({ error: "Site not found." }, { status: 404 });
   }
 
-  return Response.json(workspace);
+  return Response.json(site);
 }

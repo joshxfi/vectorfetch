@@ -2,10 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { WorkspaceActivityEvent } from "@/lib/rag/types";
+import type { SiteActivityEvent } from "@/lib/rag/types";
 import { cn } from "@/lib/utils";
 
-function activityTone(kind: WorkspaceActivityEvent["kind"]) {
+function activityTone(kind: SiteActivityEvent["kind"]) {
   switch (kind) {
     case "failed-page":
       return "bg-destructive";
@@ -30,8 +30,8 @@ function formatEventTime(value: string) {
   }).format(new Date(value));
 }
 
-function groupActivity(events: WorkspaceActivityEvent[]) {
-  const grouped = new Map<string, WorkspaceActivityEvent>();
+function groupActivity(events: SiteActivityEvent[]) {
+  const grouped = new Map<string, SiteActivityEvent>();
 
   for (const event of events) {
     const key = `${event.phase ?? "misc"}:${event.summaryKey ?? event.id}`;
@@ -56,7 +56,7 @@ function groupActivity(events: WorkspaceActivityEvent[]) {
 }
 
 type ActivitySummaryListProps = {
-  events: WorkspaceActivityEvent[];
+  events: SiteActivityEvent[];
   heightClassName?: string;
 };
 
@@ -85,10 +85,7 @@ export function ActivitySummaryList({
                 <div className="flex min-w-0 flex-col gap-1">
                   <span className="text-sm font-medium">{event.detail}</span>
                   <span className="truncate text-xs text-muted-foreground">
-                    {event.path ??
-                      event.url ??
-                      event.phase ??
-                      "Workspace activity"}
+                    {event.path ?? event.url ?? event.phase ?? "Site activity"}
                   </span>
                 </div>
                 <div className="flex flex-col items-end gap-1 text-right">

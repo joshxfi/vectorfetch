@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
 import { buildIndexPhaseVizModel } from "@/components/site-rag/index-phase-viz-data";
-import type { WorkspaceManifest } from "@/lib/rag/types";
+import type { SiteSessionManifest } from "@/lib/rag/types";
 
-function createWorkspace(
-  overrides: Partial<WorkspaceManifest> = {},
-): WorkspaceManifest {
+function createSite(
+  overrides: Partial<SiteSessionManifest> = {},
+): SiteSessionManifest {
   return {
     workspaceId: "workspace-1",
     rootUrl: "https://docs.example.com",
@@ -55,7 +55,7 @@ function createWorkspace(
 }
 
 describe("index phase viz data", () => {
-  test("renders an idle terminal prompt when no workspace is active", () => {
+  test("renders an idle terminal prompt when no site is active", () => {
     const model = buildIndexPhaseVizModel(null, 0);
 
     expect(model.phase).toBe("idle");
@@ -66,7 +66,7 @@ describe("index phase viz data", () => {
   });
 
   test("builds a crawl command and crawl-specific output", () => {
-    const model = buildIndexPhaseVizModel(createWorkspace(), 2);
+    const model = buildIndexPhaseVizModel(createSite(), 2);
 
     expect(model.phase).toBe("crawling");
     expect(model.animate).toBe(true);
@@ -77,7 +77,7 @@ describe("index phase viz data", () => {
   });
 
   test("changes the embedding terminal cursor or active line as frames advance", () => {
-    const workspace = createWorkspace({
+    const site = createSite({
       phase: "embedding",
       pipeline: {
         discoveredPages: 12,
@@ -100,8 +100,8 @@ describe("index phase viz data", () => {
       ],
     });
 
-    const frameA = buildIndexPhaseVizModel(workspace, 0);
-    const frameB = buildIndexPhaseVizModel(workspace, 1);
+    const frameA = buildIndexPhaseVizModel(site, 0);
+    const frameB = buildIndexPhaseVizModel(site, 1);
 
     expect(frameA.phase).toBe("embedding");
     expect(frameA.command).toContain("ollama embed");
@@ -111,7 +111,7 @@ describe("index phase viz data", () => {
 
   test("renders a stable ready terminal state", () => {
     const model = buildIndexPhaseVizModel(
-      createWorkspace({
+      createSite({
         status: "ready",
         phase: "ready",
         pipeline: {
@@ -136,7 +136,7 @@ describe("index phase viz data", () => {
 
   test("renders a stable error terminal state", () => {
     const model = buildIndexPhaseVizModel(
-      createWorkspace({
+      createSite({
         status: "error",
         phase: "error",
         error: "Embedding process failed",
@@ -161,12 +161,9 @@ describe("index phase viz data", () => {
   });
 
   test("produces distinct commands for chunking and storing", () => {
-    const chunk = buildIndexPhaseVizModel(
-      createWorkspace({ phase: "chunking" }),
-      1,
-    );
+    const chunk = buildIndexPhaseVizModel(createSite({ phase: "chunking" }), 1);
     const store = buildIndexPhaseVizModel(
-      createWorkspace({
+      createSite({
         phase: "storing",
         pipeline: {
           discoveredPages: 12,

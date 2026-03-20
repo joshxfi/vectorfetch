@@ -12,7 +12,7 @@ import { CHAT_MODEL, SEARCH_RESULT_LIMIT } from "@/lib/rag/constants";
 import { getWorkspaceSnapshot, searchWorkspace } from "@/lib/rag/workspace";
 
 const chatRequestSchema = z.object({
-  workspaceId: z.string().uuid(),
+  siteId: z.string().uuid(),
   messages: z.array(z.custom<UIMessage>()),
 });
 
@@ -22,14 +22,14 @@ export async function POST(req: Request) {
     return Response.json({ error: "Invalid chat request." }, { status: 400 });
   }
 
-  const workspace = await getWorkspaceSnapshot(parsed.data.workspaceId);
-  if (!workspace) {
-    return Response.json({ error: "Workspace not found." }, { status: 404 });
+  const site = await getWorkspaceSnapshot(parsed.data.siteId);
+  if (!site) {
+    return Response.json({ error: "Site not found." }, { status: 404 });
   }
 
-  if (workspace.status !== "ready") {
+  if (site.status !== "ready") {
     return Response.json(
-      { error: "This workspace is still indexing and cannot answer yet." },
+      { error: "This site is still indexing and cannot answer yet." },
       { status: 409 },
     );
   }
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: ollama(CHAT_MODEL),
     system: [
-      `You answer questions using only the indexed content from ${workspace.rootUrl}.`,
+      `You answer questions using only the indexed content from ${site.rootUrl}.`,
       "Always ground factual claims in retrieved chunks from the website.",
       "If the indexed site does not contain the answer, say that clearly instead of guessing.",
       "After any grounded answer, end with a short `Sources:` list that references only the URLs you relied on.",
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
         }),
         execute: async ({ query, topK }) => {
           const results = await searchWorkspace({
-            workspaceId: parsed.data.workspaceId,
+            workspaceId: parsed.data.siteId,
             query,
             limit: topK,
           });

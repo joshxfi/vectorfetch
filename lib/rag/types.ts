@@ -74,6 +74,15 @@ export interface WorkspaceManifest {
   recentActivity: WorkspaceActivityEvent[];
 }
 
+export type SiteStatus = WorkspaceStatus;
+export type SitePhase = WorkspacePhase;
+export type SiteActivityKind = WorkspaceActivityKind;
+export type SiteProgress = WorkspaceProgress;
+export type SitePipeline = WorkspacePipeline;
+export type SiteActivityEvent = WorkspaceActivityEvent;
+export type SiteStats = WorkspaceStats;
+export type SiteSessionManifest = WorkspaceManifest;
+
 export interface CrawledPage {
   url: string;
   path: string;

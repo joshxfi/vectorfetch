@@ -13,56 +13,56 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-type WorkspaceFormProps = {
-  workspaceBusy: boolean;
-  workspaceId: string | null;
-  workspaceUrl: string;
-  onClearWorkspace: () => void;
-  onSubmitWorkspace: (event: FormEvent<HTMLFormElement>) => void;
-  onWorkspaceUrlChange: (value: string) => void;
+type SiteIndexFormProps = {
+  siteBusy: boolean;
+  siteId: string | null;
+  siteUrl: string;
+  onClearSite: () => void;
+  onSiteUrlChange: (value: string) => void;
+  onSubmitSite: (event: FormEvent<HTMLFormElement>) => void;
 };
 
-export function WorkspaceForm({
-  workspaceBusy,
-  workspaceId,
-  workspaceUrl,
-  onClearWorkspace,
-  onSubmitWorkspace,
-  onWorkspaceUrlChange,
-}: WorkspaceFormProps) {
+export function SiteIndexForm({
+  siteBusy,
+  siteId,
+  siteUrl,
+  onClearSite,
+  onSiteUrlChange,
+  onSubmitSite,
+}: SiteIndexFormProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Index Site</CardTitle>
         <CardDescription>
-          One same-origin site per workspace. Submitting a new URL replaces the
-          current local index.
+          One active site at a time. Submitting a new URL replaces the current
+          local index.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <form className="flex flex-col gap-3" onSubmit={onSubmitWorkspace}>
+        <form className="flex flex-col gap-3" onSubmit={onSubmitSite}>
           <Input
             aria-label="Website URL"
             autoComplete="off"
-            disabled={workspaceBusy}
+            disabled={siteBusy}
             placeholder="https://docs.example.com"
-            value={workspaceUrl}
-            onChange={(event) => onWorkspaceUrlChange(event.target.value)}
+            value={siteUrl}
+            onChange={(event) => onSiteUrlChange(event.target.value)}
           />
           <div className="flex flex-wrap gap-2">
-            <Button disabled={workspaceBusy} type="submit">
-              {workspaceBusy ? (
+            <Button disabled={siteBusy} type="submit">
+              {siteBusy ? (
                 <SpinnerGap className="animate-spin" data-icon="inline-start" />
               ) : (
                 <GlobeHemisphereWest data-icon="inline-start" />
               )}
-              {workspaceId ? "Reindex Site" : "Index Site"}
+              {siteId ? "Reindex Site" : "Index Site"}
             </Button>
             <Button
-              disabled={!workspaceId || workspaceBusy}
+              disabled={!siteId || siteBusy}
               type="button"
               variant="destructive"
-              onClick={onClearWorkspace}
+              onClick={onClearSite}
             >
               <Trash data-icon="inline-start" />
               Clear
