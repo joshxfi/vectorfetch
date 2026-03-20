@@ -7,7 +7,7 @@ import {
   Warning,
 } from "@phosphor-icons/react";
 import type { UIMessage } from "ai";
-import type { FormEvent } from "react";
+import { type FormEvent, useEffect, useMemo, useRef } from "react";
 import { Streamdown } from "streamdown";
 
 import { messageSources, messageText } from "@/components/site-rag/helpers";
@@ -104,6 +104,54 @@ export function ConversationPanel({
   onPromptChange,
   onSubmitPrompt,
 }: ConversationPanelProps) {
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const shouldStickRef = useRef(true);
+  const previousSignatureRef = useRef("");
+  const lastMessageSignature = useMemo(() => {
+    const lastMessage = messages.at(-1);
+    if (!lastMessage) {
+      return "empty";
+    }
+
+    return `${lastMessage.id}:${messageText(lastMessage).length}:${messages.length}`;
+  }, [messages]);
+
+  useEffect(() => {
+    const viewport = contentRef.current?.parentElement;
+    if (!viewport) {
+      return;
+    }
+
+    const updateStickiness = () => {
+      const distanceFromBottom =
+        viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+      shouldStickRef.current = distanceFromBottom < 32;
+    };
+
+    updateStickiness();
+    viewport.addEventListener("scroll", updateStickiness, { passive: true });
+
+    return () => {
+      viewport.removeEventListener("scroll", updateStickiness);
+    };
+  }, []);
+
+  useEffect(() => {
+    const viewport = contentRef.current?.parentElement;
+    const changed = previousSignatureRef.current !== lastMessageSignature;
+    previousSignatureRef.current = lastMessageSignature;
+
+    if (!changed) {
+      return;
+    }
+
+    if (!viewport || !shouldStickRef.current) {
+      return;
+    }
+
+    viewport.scrollTop = viewport.scrollHeight;
+  }, [lastMessageSignature]);
+
   return (
     <Card className="flex h-full w-full min-h-0 flex-col">
       <CardHeader className="border-b">
@@ -132,7 +180,7 @@ export function ConversationPanel({
         ) : null}
 
         <ScrollArea className="min-h-0 flex-1">
-          <div className="flex min-h-full flex-col gap-4 p-4">
+          <div ref={contentRef} className="flex min-h-full flex-col gap-4 p-4">
             {messages.length === 0 ? (
               <EmptyConversationState isIndexing={isIndexing} />
             ) : null}
@@ -199,23 +247,6 @@ export function ConversationPanel({
                 </div>
               );
             })}
-
-            {busyChat ? (
-              <div className="flex w-full flex-col gap-3 items-stretch">
-                <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
-                  <SpinnerGap className="animate-spin shrink-0" />
-                  <span className="truncate">
-                    Retrieving site context and generating an answer
-                  </span>
-                </div>
-                <div className="flex w-full flex-col gap-3 border px-4 py-3">
-                  <Skeleton className="h-4 w-40" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <Skeleton className="h-4 w-3/5" />
-                </div>
-              </div>
-            ) : null}
           </div>
         </ScrollArea>
       </CardContent>

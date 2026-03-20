@@ -1,3 +1,4 @@
+import { EMBEDDING_MODEL } from "@/lib/rag/constants";
 import type {
   SiteActivityEvent,
   SitePhase,
@@ -112,7 +113,7 @@ function summarizePhaseOutput(site: SiteSessionManifest) {
     case "embedding":
       return {
         prompt: "embed@ollama",
-        command: `ollama embed qwen3-embedding:0.6b --chunks ${total}`,
+        command: `ollama embed ${site.embeddingModel || EMBEDDING_MODEL} --chunks ${total}`,
         outputLines: [
           `[batch] ${site.pipeline.embeddedChunks}/${total} chunks embedded`,
           `[dims] ${site.embeddingDimensions ?? "pending"} dimensions`,

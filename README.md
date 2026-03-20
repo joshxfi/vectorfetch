@@ -1,21 +1,12 @@
-# Next.js template
+# Vectorfetch
 
-This is a Next.js template with shadcn/ui.
+Local website RAG with Next.js, Crawlee, Ollama, AI SDK, and zvec.
 
-## Adding components
+## Model Configuration
 
-To add components to your app, run the following command:
+The app uses these defaults unless you override them with environment variables:
 
-```bash
-npx shadcn@latest add button
-```
+- `VECTORFETCH_CHAT_MODEL=lfm2:24b`
+- `VECTORFETCH_EMBEDDING_MODEL=qwen3-embedding:0.6b`
 
-This will place the ui components in the `components` directory.
-
-## Using components
-
-To use the components in your app, import them as follows:
-
-```tsx
-import { Button } from "@/components/ui/button";
-```
+Copy [.env.example](/Users/joshxfi/projects/open-source/vectorfetch/.env.example) to `.env` and adjust the values if you want different local Ollama models.

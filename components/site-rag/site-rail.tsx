@@ -7,6 +7,7 @@ import { siteTone } from "@/components/site-rag/helpers";
 import { SiteIndexForm } from "@/components/site-rag/site-index-form";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CHAT_MODEL, EMBEDDING_MODEL } from "@/lib/rag/constants";
 import type { SiteSessionManifest } from "@/lib/rag/types";
 
 type SiteRailProps = {
@@ -64,8 +65,8 @@ export function SiteRail({
               {site?.rootUrl ?? "No active site"}
             </span>
             <span>
-              Models: {site?.embeddingModel ?? "qwen3-embedding:0.6b"} /{" "}
-              {site?.chatModel ?? "lfm2:24b"}
+              Models: {site?.embeddingModel ?? EMBEDDING_MODEL} /{" "}
+              {site?.chatModel ?? CHAT_MODEL}
             </span>
           </div>
 
