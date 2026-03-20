@@ -24,3 +24,4 @@ export const MIN_PAGE_TEXT_LENGTH = 160;
 export const CHUNK_MAX_CHARS = 1200;
 export const CHUNK_OVERLAP_CHARS = 200;
 export const SEARCH_RESULT_LIMIT = 6;
+export const MAX_TOOL_SEARCH_RESULTS = 12;

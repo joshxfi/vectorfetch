@@ -8,13 +8,30 @@ import {
 import { ollama } from "ai-sdk-ollama";
 import { z } from "zod";
 
-import { CHAT_MODEL, SEARCH_RESULT_LIMIT } from "@/lib/rag/constants";
+import {
+  CHAT_MODEL,
+  MAX_TOOL_SEARCH_RESULTS,
+  SEARCH_RESULT_LIMIT,
+} from "@/lib/rag/constants";
+import type { SearchChunkResult } from "@/lib/rag/types";
 import { getWorkspaceSnapshot, searchWorkspace } from "@/lib/rag/workspace";
 
 const chatRequestSchema = z.object({
   siteId: z.string().uuid(),
   messages: z.array(z.custom<UIMessage>()),
 });
+
+const TOOL_TEXT_SNIPPET_MAX_CHARS = 420;
+
+function compactToolResults(results: SearchChunkResult[]) {
+  return results.slice(0, MAX_TOOL_SEARCH_RESULTS).map((result) => ({
+    ...result,
+    text:
+      result.text.length > TOOL_TEXT_SNIPPET_MAX_CHARS
+        ? `${result.text.slice(0, TOOL_TEXT_SNIPPET_MAX_CHARS).trim()}...`
+        : result.text,
+  }));
+}
 
 export async function POST(req: Request) {
   const parsed = chatRequestSchema.safeParse(await req.json());
@@ -40,19 +57,27 @@ export async function POST(req: Request) {
       `You answer questions using only the indexed content from ${site.rootUrl}.`,
       "For greetings, acknowledgements, and other conversational turns that do not require site facts, respond normally without using tools.",
       "For factual questions about the indexed website, use retrieved chunks from the website before answering.",
+      "If the user asks for a list, chronology, dates, or broad coverage, you may call the search tool multiple times with focused queries before answering.",
+      "Prefer multiple narrower searches over one oversized retrieval when you need broader coverage.",
+      "Never tell the user you were blocked by an internal tool result limit. Broaden or refine your search first, and only say the site content itself is insufficient if repeated retrieval still does not provide the answer.",
       "If the indexed site does not contain the answer, say that clearly instead of guessing.",
       "After any grounded answer, end with a short `Sources:` list that references only the URLs you relied on.",
       "Keep answers concise and practical.",
     ].join("\n"),
     messages: await convertToModelMessages(parsed.data.messages),
-    stopWhen: stepCountIs(3),
+    stopWhen: stepCountIs(5),
     tools: {
       searchSiteContext: tool({
         description:
-          "Search the indexed website content for the most relevant chunks before answering.",
+          "Search the indexed website content for the most relevant chunks before answering. Use this multiple times for exhaustive lists, chronology questions, or date lookups.",
         inputSchema: z.object({
           query: z.string().min(2),
-          topK: z.number().int().min(1).max(8).default(SEARCH_RESULT_LIMIT),
+          topK: z
+            .number()
+            .int()
+            .min(1)
+            .max(MAX_TOOL_SEARCH_RESULTS)
+            .default(SEARCH_RESULT_LIMIT),
         }),
         execute: async ({ query, topK }) => {
           const results = await searchWorkspace({
@@ -63,7 +88,7 @@ export async function POST(req: Request) {
 
           return {
             query,
-            results,
+            results: compactToolResults(results),
           };
         },
       }),
