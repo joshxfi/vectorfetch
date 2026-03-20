@@ -38,22 +38,14 @@ export async function POST(req: Request) {
     model: ollama(CHAT_MODEL),
     system: [
       `You answer questions using only the indexed content from ${site.rootUrl}.`,
-      "Always ground factual claims in retrieved chunks from the website.",
+      "For greetings, acknowledgements, and other conversational turns that do not require site facts, respond normally without using tools.",
+      "For factual questions about the indexed website, use retrieved chunks from the website before answering.",
       "If the indexed site does not contain the answer, say that clearly instead of guessing.",
       "After any grounded answer, end with a short `Sources:` list that references only the URLs you relied on.",
       "Keep answers concise and practical.",
     ].join("\n"),
     messages: await convertToModelMessages(parsed.data.messages),
     stopWhen: stepCountIs(3),
-    prepareStep: ({ stepNumber }) =>
-      stepNumber === 1
-        ? {
-            toolChoice: {
-              type: "tool",
-              toolName: "searchSiteContext",
-            },
-          }
-        : undefined,
     tools: {
       searchSiteContext: tool({
         description:

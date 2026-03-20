@@ -6,7 +6,7 @@ type MessageSourcesProps = {
 
 export function MessageSources({ sources }: MessageSourcesProps) {
   return (
-    <div className="flex w-full max-w-3xl flex-col gap-2 border p-3">
+    <div className="flex w-full flex-col gap-2 border p-3">
       <div className="text-xs font-medium">Retrieved Sources</div>
       <div className="grid gap-2 xl:grid-cols-2">
         {sources.map((source) => (

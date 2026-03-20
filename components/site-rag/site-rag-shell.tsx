@@ -60,6 +60,7 @@ export function SiteRagShell() {
   }
 
   const ready = site?.status === "ready";
+  const isIndexing = site?.status === "indexing";
   const busyChat = chatStatus === "submitted" || chatStatus === "streaming";
 
   return (
@@ -70,6 +71,7 @@ export function SiteRagShell() {
             <ConversationPanel
               busyChat={busyChat}
               chatError={chatError}
+              isIndexing={isIndexing}
               messages={messages}
               prompt={prompt}
               ready={ready}

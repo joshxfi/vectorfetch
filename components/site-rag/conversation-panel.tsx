@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 type ConversationPanelProps = {
   busyChat: boolean;
   chatError?: Error;
+  isIndexing: boolean;
   messages: UIMessage[];
   prompt: string;
   ready: boolean;
@@ -37,9 +38,66 @@ type ConversationPanelProps = {
   onSubmitPrompt: (event: FormEvent<HTMLFormElement>) => void;
 };
 
+function EmptyConversationState({ isIndexing }: { isIndexing: boolean }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="grid gap-3 border p-4 md:grid-cols-[auto_1fr]">
+        <ChatCircleDots className="text-muted-foreground" />
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium">
+            Ask the site once the local index is ready
+          </p>
+          <p className="text-sm text-muted-foreground">
+            The assistant searches your local zvec collection before answering
+            and cites the pages it used.
+          </p>
+        </div>
+      </div>
+
+      {isIndexing ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex w-full items-start">
+            <div className="flex w-full flex-col gap-3 border p-4">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <SpinnerGap className="animate-spin shrink-0" />
+                <span>Waiting for a site to finish indexing</span>
+              </div>
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          </div>
+
+          <div className="flex w-full justify-end">
+            <div className="flex w-full max-w-3xl flex-col gap-3 border border-dashed p-4">
+              <Skeleton className="h-4 w-36 self-end" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3 self-end" />
+            </div>
+          </div>
+
+          <div className="flex w-full items-start">
+            <div className="flex w-full flex-col gap-3 border p-4">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="border border-dashed p-4 text-sm text-muted-foreground">
+          No active site yet. Paste a root URL on the right to build a local
+          index, then start the conversation here.
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ConversationPanel({
   busyChat,
   chatError,
+  isIndexing,
   messages,
   prompt,
   ready,
@@ -47,7 +105,7 @@ export function ConversationPanel({
   onSubmitPrompt,
 }: ConversationPanelProps) {
   return (
-    <Card className="flex h-full min-h-0 flex-col">
+    <Card className="flex h-full w-full min-h-0 flex-col">
       <CardHeader className="border-b">
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
@@ -76,52 +134,36 @@ export function ConversationPanel({
         <ScrollArea className="min-h-0 flex-1">
           <div className="flex min-h-full flex-col gap-4 p-4">
             {messages.length === 0 ? (
-              <div className="flex flex-col gap-4">
-                <div className="grid gap-3 border p-4 md:grid-cols-[auto_1fr]">
-                  <ChatCircleDots className="text-muted-foreground" />
-                  <div className="flex flex-col gap-2">
-                    <p className="text-sm font-medium">
-                      Ask the site once the local index is ready
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      The assistant searches your local zvec collection before
-                      answering and cites the pages it used.
-                    </p>
-                  </div>
-                </div>
-
-                {!ready ? (
-                  <div className="grid gap-3 xl:grid-cols-2">
-                    <Skeleton className="h-24 border" />
-                    <Skeleton className="h-24 border" />
-                  </div>
-                ) : null}
-              </div>
+              <EmptyConversationState isIndexing={isIndexing} />
             ) : null}
 
             {messages.map((message) => {
               const text = messageText(message);
               const sources =
                 message.role === "assistant" ? messageSources(message) : [];
+              const isUser = message.role === "user";
 
               return (
                 <div
                   key={message.id}
                   className={cn(
                     "flex w-full flex-col gap-3",
-                    message.role === "user" ? "items-end" : "items-start",
+                    isUser ? "items-end" : "items-stretch",
                   )}
                 >
                   <div
                     className={cn(
-                      "w-full max-w-3xl border px-4 py-3 text-sm whitespace-pre-wrap",
-                      message.role === "user"
+                      "w-full border px-4 py-3 text-sm whitespace-pre-wrap",
+                      isUser && "max-w-3xl",
+                      isUser
                         ? "bg-primary text-primary-foreground"
                         : "bg-card text-card-foreground",
                     )}
                   >
                     {text ? (
-                      message.role === "assistant" ? (
+                      isUser ? (
+                        text
+                      ) : (
                         <Streamdown
                           className="streamdown prose prose-neutral max-w-none text-current dark:prose-invert"
                           isAnimating={busyChat}
@@ -129,18 +171,24 @@ export function ConversationPanel({
                         >
                           {text}
                         </Streamdown>
-                      ) : (
-                        text
                       )
                     ) : (
-                      <span className="text-muted-foreground">
-                        Waiting for model output...
-                      </span>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <SpinnerGap className="animate-spin shrink-0" />
+                          <span>Generating response</span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-2/3" />
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  {message.role === "assistant" && sources.length > 0 ? (
-                    <div className="flex w-full max-w-3xl flex-col gap-2">
+                  {!isUser && sources.length > 0 ? (
+                    <div className="flex w-full flex-col gap-2">
                       <div className="flex items-center gap-2 text-xs font-medium">
                         <MagnifyingGlass className="text-muted-foreground" />
                         Retrieved sources
@@ -153,14 +201,19 @@ export function ConversationPanel({
             })}
 
             {busyChat ? (
-              <div className="flex w-full flex-col gap-3 items-start">
-                <div className="flex w-full max-w-3xl items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex w-full flex-col gap-3 items-stretch">
+                <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
                   <SpinnerGap className="animate-spin shrink-0" />
                   <span className="truncate">
                     Retrieving site context and generating an answer
                   </span>
                 </div>
-                <Skeleton className="h-16 w-full max-w-3xl border" />
+                <div className="flex w-full flex-col gap-3 border px-4 py-3">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                  <Skeleton className="h-4 w-3/5" />
+                </div>
               </div>
             ) : null}
           </div>

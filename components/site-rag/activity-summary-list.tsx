@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import type { SiteActivityEvent } from "@/lib/rag/types";
 import { cn } from "@/lib/utils";
 
@@ -30,31 +31,6 @@ function formatEventTime(value: string) {
   }).format(new Date(value));
 }
 
-function groupActivity(events: SiteActivityEvent[]) {
-  const grouped = new Map<string, SiteActivityEvent>();
-
-  for (const event of events) {
-    const key = `${event.phase ?? "misc"}:${event.summaryKey ?? event.id}`;
-    const previous = grouped.get(key);
-
-    if (
-      previous &&
-      typeof event.progressCurrent === "number" &&
-      typeof previous.progressCurrent === "number" &&
-      event.progressCurrent >= previous.progressCurrent
-    ) {
-      grouped.set(key, event);
-      continue;
-    }
-
-    if (!previous) {
-      grouped.set(key, event);
-    }
-  }
-
-  return [...grouped.values()].reverse();
-}
-
 type ActivitySummaryListProps = {
   events: SiteActivityEvent[];
   heightClassName?: string;
@@ -64,16 +40,54 @@ export function ActivitySummaryList({
   events,
   heightClassName = "h-full",
 }: ActivitySummaryListProps) {
-  const activity = groupActivity(events);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const shouldStickRef = useRef(true);
+  const latestEventId = events.at(-1)?.id ?? "";
+  const previousLatestEventRef = useRef(latestEventId);
+  const previousCountRef = useRef(events.length);
+
+  useEffect(() => {
+    const viewport = scrollRef.current;
+    const changed =
+      previousLatestEventRef.current !== latestEventId ||
+      previousCountRef.current !== events.length;
+
+    previousLatestEventRef.current = latestEventId;
+    previousCountRef.current = events.length;
+
+    if (!viewport || !shouldStickRef.current || !changed) {
+      return;
+    }
+
+    viewport.scrollTop = viewport.scrollHeight;
+  }, [events.length, latestEventId]);
+
+  function handleScroll() {
+    const viewport = scrollRef.current;
+    if (!viewport) {
+      return;
+    }
+
+    const distanceFromBottom =
+      viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+    shouldStickRef.current = distanceFromBottom < 24;
+  }
 
   return (
     <div className="min-h-0 flex-1">
-      <ScrollArea className={cn("min-h-0", heightClassName)}>
+      <div
+        ref={scrollRef}
+        className={cn(
+          "min-h-0 overflow-y-auto pr-1 [scrollbar-gutter:stable]",
+          heightClassName,
+        )}
+        onScroll={handleScroll}
+      >
         <div className="flex flex-col gap-2">
-          {activity.length > 0 ? (
-            activity.map((event) => (
+          {events.length > 0 ? (
+            events.map((event) => (
               <div
-                key={`${event.summaryKey ?? event.id}-${event.id}`}
+                key={event.id}
                 className="grid grid-cols-[auto_1fr_auto] items-start gap-3 border p-2.5"
               >
                 <span
@@ -109,7 +123,7 @@ export function ActivitySummaryList({
             </div>
           )}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 }
